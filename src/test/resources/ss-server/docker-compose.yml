@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  shadowsocks:
+    image: shadowsocks/shadowsocks-libev
+    ports:
+      - "25000-26000:25000-26000/tcp"
+      - "25000-26000:25000-26000/udp"
+      - "6000:6000/udp"
+    command: ss-manager -m aes-256-gcm -u -D /data/shadowsocks --manager-address 0.0.0.0:6000
+    volumes:
+      - ./ss-manager:/data/shadowsocks
