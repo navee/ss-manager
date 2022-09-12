@@ -9,4 +9,4 @@ services:
       - "6000:6000/udp"
     command: ss-manager -m aes-256-gcm -u -D /data/shadowsocks --manager-address 0.0.0.0:6000
     volumes:
-      - ./ss-manager:/data/shadowsocks
+      - ./config:/data/shadowsocks

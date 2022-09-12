@@ -1,5 +1,6 @@
 package com.github.navee.ssmanager;
 
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,44 +13,34 @@ import java.io.*;
 public class EchoServer extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger(EchoServer.class);
 
-    private ServerSocket serverSocket;
-    private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private DatagramSocket socket;
+    private boolean running;
+    private byte[] buf = new byte[256];
 
-    public void start(int port) {
-        try {
-            serverSocket = new ServerSocket(port);
-            clientSocket = serverSocket.accept();
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                if (".".equals(inputLine)) {
-                    out.println("good bye");
-                    break;
-                }
-                out.println(inputLine);
+    public EchoServer(int port) throws SocketException {
+        socket = new DatagramSocket(port);
+    }
+
+    @SneakyThrows
+    public void run() {
+        running = true;
+
+        while (running) {
+            DatagramPacket packet
+                    = new DatagramPacket(buf, buf.length);
+            socket.receive(packet);
+
+            InetAddress address = packet.getAddress();
+            int port = packet.getPort();
+            packet = new DatagramPacket(buf, buf.length, address, port);
+            String received = new String(packet.getData(), 0, packet.getLength());
+
+            if (received.equals("end")) {
+                running = false;
+                continue;
             }
-        } catch (IOException e) {
-            LOG.debug(e.getMessage());
+            socket.send(packet);
         }
-
-    }
-
-    public void shutdown() {
-        try {
-            in.close();
-            out.close();
-            clientSocket.close();
-            serverSocket.close();
-        } catch (IOException e) {
-            LOG.debug(e.getMessage());
-        }
-    }
-
-    public static void main(String[] args) {
-        EchoServer server = new EchoServer();
-        server.start(4444);
+        socket.close();
     }
 }
