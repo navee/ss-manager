@@ -6,7 +6,7 @@
     <modules>
         <module>ss-manager-javalinapi</module>
         <module>ss-manager-client</module>
-        <module>ss-manager-bootapi</module>
+<!--        <module>ss-manager-bootapi</module>-->
     </modules>
     <groupId>com.github.navee</groupId>
     <artifactId>ss-manager</artifactId>
