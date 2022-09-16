@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/ss-manager-javalinapi/webui/node_modules/
+/ss-manager-bootiapi/src/test/resources/ss-server/config/*
